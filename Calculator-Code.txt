@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آلة حاسبة</title>
+    <style>
+        body {
+            background-color: blue;
+            font-family: Arial, sans-serif;
+        }
+        button {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            margin: 5px;
+            background-color: darkkhaki;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #d0d0d0;
+        }
+        #screen {
+            width: 260px;
+            border: 2px solid #ccc;
+            background-color: chocolate;
+            margin: 20px auto;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #all {
+            background-color: burlywood;
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        }
+    </style>
+</head>
+<body>
+    
+        <div id="all">
+        
+        <div id="screen">0</div>
+        <div id="table">
+            
+            <table>
+                <tr>
+                    <td><button onclick="appendNumber(1)">1</button></td>
+                    <td><button onclick="appendNumber(2)">2</button></td>
+                    <td><button onclick="appendNumber(3)">3</button></td>
+                    <td><button class="main" onclick="clearAll()">AC</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="appendNumber(4)">4</button></td>
+                    <td><button onclick="appendNumber(5)">5</button></td>
+                    <td><button onclick="appendNumber(6)">6</button></td>
+                    <td><button class="operation" onclick="setOperation('*')">*</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="appendNumber(7)">7</button></td>
+                    <td><button onclick="appendNumber(😎">8</button></td>
+                    <td><button onclick="appendNumber(9)">9</button></td>
+                    <td><button class="operation" onclick="setOperation('-')">-</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="appendNumber(0)">0</button></td>
+                    <td><button onclick="appendDecimal()">.</button></td>
+                    <td><button class="operation" onclick="setOperation('+')">+</button></td>
+                    <td><button class="operation" onclick="setOperation('/')">/</button></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><button class="operation" onclick="calculate()">=</button></td>
+                </tr>
+            </table>
+            
+        </div>
+    </div>
+    <script>
+        let currentInput = '';
+        let lastOperation = '';
+        let lastValue = 0;
+
+        function appendNumber(num) {
+            currentInput += num;
+            document.getElementById('screen').innerText = currentInput;
+        }
+
+        function appendDecimal() {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                document.getElementById('screen').innerText = currentInput;
+            }
+        }
+
+        function setOperation(op) {
+            if (currentInput === '') return;
+            if (lastValue !== 0) {
+                calculate();
+            }
+            lastOperation = op;
+            lastValue = parseFloat(currentInput);
+            currentInput = '';
+        }
+
+        function calculate() {
+            let result;
+            const currentNumber = parseFloat(currentInput);
+            if (isNaN(currentNumber) || lastOperation === '') return;
+
+            switch (lastOperation) {
+                case '+':
+                    result = lastValue + currentNumber;
+                    break;
+                case '-':
+                    result = lastValue - currentNumber;
+                    break;
+                case '*':
+                    result = lastValue * currentNumber;
+                    break;
+                case '/':
+                    if (currentNumber === 0) {
+                        alert("لا يمكن القسمة على صفر!");
+                        clearAll();
+                        return;
+                    }
+                    result = lastValue / currentNumber;
+                    break;
+            }
+            currentInput = result.toString();
+            lastOperation = '';
+            lastValue = 0;
+            document.getElementById('screen').innerText = currentInput;
+        }
+
+        function clearAll() {
+            currentInput = '';
+            lastOperation = '';
+            lastValue = 0;
+            document.getElementById('screen').innerText = '0';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (!isNaN(key)) {
+                appendNumber(key);
+            } else if (key === '.') {
+                appendDecimal();
+            } else if (key === '+') {
+                setOperation('+');
+            } else if (key === '-') {
+                setOperation('-');
+            } else if (key === '*') {
+                setOperation('*');
+            } else if (key === '/') {
+                setOperation('/');
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearAll();
+            }
+        });
+    </script>
+</body>
+</html>
